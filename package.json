@@ -36,8 +36,5 @@
       "prettier --write"
     ]
   },
-  "private": true,
-  "languageOptions": {
-    "parser": "@typescript-eslint/parser"
-  }
+  "private": true
 }

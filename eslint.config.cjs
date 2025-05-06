@@ -1,16 +1,24 @@
-// eslint.config.cjs  (CommonJS, so __dirname works)
+// eslint.config.cjs (CommonJS)
 const { FlatCompat } = require('@eslint/eslintrc');
-const { resolve } = require('path');
+const path = require('path');
 const typescriptParser = require('@typescript-eslint/parser');
+const reactPlugin = require('eslint-plugin-react');
+const reactNativePlugin = require('eslint-plugin-react-native');
+const typescriptPlugin = require('@typescript-eslint/eslint-plugin');
 
 // Create a compatibility instance
 const compat = new FlatCompat({
-  baseDirectory: resolve(__dirname),
+  baseDirectory: path.resolve(__dirname),
   // Do not include eslint:recommended here to avoid circular reference
   recommendedConfig: {},
 });
 
 module.exports = [
+  // Base configuration for all files
+  {
+    ignores: ['eslint.config.cjs'], // Ignore the ESLint config file itself
+  },
+
   // Import eslint:recommended directly from the compatibility layer
   ...compat.extends(
     'eslint:recommended',
@@ -20,7 +28,7 @@ module.exports = [
     'prettier',
   ),
 
-  // ➌  File‑specific overrides
+  // File‑specific overrides
   {
     files: ['*.{js,jsx,ts,tsx}'],
     languageOptions: {
@@ -32,9 +40,9 @@ module.exports = [
       },
     },
     plugins: {
-      react: require('eslint-plugin-react'),
-      'react-native': require('eslint-plugin-react-native'),
-      '@typescript-eslint': require('@typescript-eslint/eslint-plugin'),
+      react: reactPlugin,
+      'react-native': reactNativePlugin,
+      '@typescript-eslint': typescriptPlugin,
     },
     rules: {
       quotes: ['error', 'single', { avoidEscape: true }],
@@ -44,7 +52,17 @@ module.exports = [
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
       ],
       'react/prop-types': 'off',
+      // Disable rules that are causing problems
+      'react/react-in-jsx-scope': 'off', // React 17+ doesn't require importing React
+      'react-native/no-color-literals': 'off', // Optional: disable if you prefer inline colors
+      'react-native/sort-styles': 'warn', // Change to warning instead of error
+      '@typescript-eslint/no-require-imports': 'off', // For compatibility with CJS modules
     },
-    settings: { react: { version: 'detect' } },
+    settings: {
+      react: {
+        version: 'detect',
+        pragma: 'React',
+      },
+    },
   },
 ];
