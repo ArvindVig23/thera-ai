@@ -1,4 +1,5 @@
-// eslint.config.cjs (CommonJS)
+// eslint.config.cjs
+
 const { FlatCompat } = require('@eslint/eslintrc');
 const path = require('path');
 const typescriptParser = require('@typescript-eslint/parser');
@@ -6,20 +7,16 @@ const reactPlugin = require('eslint-plugin-react');
 const reactNativePlugin = require('eslint-plugin-react-native');
 const typescriptPlugin = require('@typescript-eslint/eslint-plugin');
 
-// Create a compatibility instance
 const compat = new FlatCompat({
   baseDirectory: path.resolve(__dirname),
-  // Do not include eslint:recommended here to avoid circular reference
   recommendedConfig: {},
 });
 
 module.exports = [
-  // Base configuration for all files
   {
-    ignores: ['eslint.config.cjs'], // Ignore the ESLint config file itself
+    ignores: ['eslint.config.cjs'],
   },
 
-  // Import eslint:recommended directly from the compatibility layer
   ...compat.extends(
     'eslint:recommended',
     'plugin:react/recommended',
@@ -28,7 +25,6 @@ module.exports = [
     'prettier',
   ),
 
-  // File‑specific overrides
   {
     files: ['*.{js,jsx,ts,tsx}'],
     languageOptions: {
@@ -52,15 +48,14 @@ module.exports = [
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
       ],
       'react/prop-types': 'off',
-      // Disable rules that are causing problems
-      'react/react-in-jsx-scope': 'off', // React 17+ doesn't require importing React
-      'react-native/no-color-literals': 'off', // Optional: disable if you prefer inline colors
-      'react-native/sort-styles': 'warn', // Change to warning instead of error
-      '@typescript-eslint/no-require-imports': 'off', // For compatibility with CJS modules
+      'react/react-in-jsx-scope': 'off',
+      'react-native/no-color-literals': 'off',
+      'react-native/sort-styles': 'warn',
+      '@typescript-eslint/no-require-imports': 'off',
     },
     settings: {
       react: {
-        version: 'detect',
+        version: '19.0.0',
         pragma: 'React',
       },
     },
